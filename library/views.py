@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import MyUser, Book, Record
-from .serializers import BookSerializer, MemberSerializer
+from .serializers import BookSerializer, MemberSerializer, RecordSerializer
 
 # Create your views here.
 
@@ -170,3 +170,12 @@ def returnBook(request,id):
         record_type = 'RETURN'
     )
     return Response({'message':f'You have successfully returned {book.name}'})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def viewRecords(request):
+    if request.user.role == 'MEMBER':
+        return Response({'message':"You don't have permission to do this"})
+    records = Record.objects.all()
+    serial = RecordSerializer(records, many=True)
+    return Response(serial.data)
