@@ -1,3 +1,4 @@
+from unicodedata import name
 from django.urls import path
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -22,4 +23,7 @@ urlpatterns = [
     path('view-member/<str:id>', views.viewMember, name='view_member'),
     path('update-member/<str:id>', views.updateMember, name='update_member'),
     path('remove-member/<str:id>', views.removeMember, name='remove_member'),
+
+    path('borrow-book/<str:id>', views.borrowBook, name='borrow_book'),
+    path('return-book/<str:id>', views.returnBook, name='return_book'),
 ]

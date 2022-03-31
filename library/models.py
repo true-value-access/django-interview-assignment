@@ -1,3 +1,4 @@
+from secrets import choice
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -16,4 +17,5 @@ class Book(models.Model):
 class Record(models.Model):
     book = models.ForeignKey("Book", on_delete=models.CASCADE)
     user = models.ForeignKey("MyUser", on_delete=models.CASCADE)
+    record_type = models.CharField(max_length=50, choices=[('BORROW', 'BORROW'),('RETURN', 'RETURN')], null=True)
     created = models.DateTimeField(auto_now=False, auto_now_add=True)

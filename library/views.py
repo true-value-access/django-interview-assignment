@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import MyUser, Book
+from .models import MyUser, Book, Record
 from .serializers import BookSerializer, MemberSerializer
 
 # Create your views here.
@@ -136,7 +136,7 @@ def updateMember(request,id):
     user.save()
     return Response({'message':'Member added successfully'})
 
-@api_view(['PUT'])
+@api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def removeMember(request,id):
     if request.user.role == 'MEMBER':
@@ -144,3 +144,29 @@ def removeMember(request,id):
     user = MyUser.objects.get(id=id)
     user.delete()
     return Response({'message':'Member removed successfully'})
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def borrowBook(request,id):
+    book = Book.objects.get(id=id)
+    book.status = False
+    book.save()
+    Record.objects.create(
+        book = book,
+        user = request.user,
+        record_type = 'BORROW'
+    )
+    return Response({'message':f'You have successfully borrowed {book.name}'})
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def returnBook(request,id):
+    book = Book.objects.get(id=id)
+    book.status = True
+    book.save()
+    Record.objects.create(
+        book = book,
+        user = request.user,
+        record_type = 'RETURN'
+    )
+    return Response({'message':f'You have successfully returned {book.name}'})
