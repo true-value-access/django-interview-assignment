@@ -9,7 +9,7 @@ class MyUser(AbstractUser):
 
 class Book(models.Model):
     name = models.CharField(max_length=200)
-    status = models.BooleanField(choices=[(False, "BORROWED"), (True, "AVAILABLE")] , default=False)
+    status = models.BooleanField(choices=[(False, "BORROWED"), (True, "AVAILABLE")] , default=True)
 
     def __str__(self):
         return self.name
