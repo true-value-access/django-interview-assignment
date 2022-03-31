@@ -1,8 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
-class MyUser(models.Model):
+
+class MyUser(AbstractUser):
     role = models.CharField(max_length=50, choices=[("LIBRARIAN", "LIBRARIAN"),("MEMBER", "MEMBER")])
 
 class Book(models.Model):
