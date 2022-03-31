@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from library.models import MyUser
+from library.models import MyUser, Book
 
 # Create your views here.
 
@@ -31,5 +31,26 @@ def register(request):
     except: 
         res = {'message': 'username already exists'}
     
-
     return Response(res)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def addBook(request):
+    if request.user.role == 'MEMBER':
+        return Response({'message':"You don't have permission to do this"})
+    data = request.data
+    Book.objects.create(
+        name = data['name']
+    )
+    return Response({'message': 'Book Created Successfully'})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def updateBook(request):
+    if request.user.role == 'MEMBER':
+        return Response({'message':"You don't have permission to do this"})
+    data = request.data
+    Book.objects.create(
+        name = data['name']
+    )
+    return Response({'message': 'Book updated Successfully'})
