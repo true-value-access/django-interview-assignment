@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import MyUser, Book
-from .serializers import BookSerializer
+from .serializers import BookSerializer, MemberSerializer
 
 # Create your views here.
 
@@ -78,3 +78,69 @@ def removeBook(request, id):
     book = Book.objects.get(id=id)
     book.delete()
     return Response({'message': 'Book deleted Successfully'})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def addMember(request):
+    if request.user.role == 'MEMBER':
+        return Response({'message':"You don't have permission to do this"})
+    data = request.data
+    username = data['username']
+    password = make_password(data['password'])
+    try:
+        user = MyUser.objects.create(
+            username=username,
+            password=password
+        )
+    except:
+        return Response({'message':'username already exists'})
+    user.first_name = data['fname']
+    user.last_name = data['lname']
+    user.email = data['email']
+    user.role = 'MEMBER'
+    user.save()
+    return Response({'message':'Member added successfully'})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def viewMembers(request):
+    if request.user.role == 'MEMBER':
+        return Response({'message':"You don't have permission to do this"})
+    members = MyUser.objects.filter(role='MEMBER')
+    serial = MemberSerializer(members, many=True)
+    return Response(serial.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def viewMember(request,id):
+    if request.user.role == 'MEMBER':
+        return Response({'message':"You don't have permission to do this"})
+    member = MyUser.objects.get(id=id)
+    serial = MemberSerializer(member)
+    return Response(serial.data)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def updateMember(request,id):
+    if request.user.role == 'MEMBER':
+        return Response({'message':"You don't have permission to do this"})
+    data = request.data
+    user = MyUser.objects.get(id=id)
+    user.username = data['username']
+    user.password = make_password(data['password'])
+    user.first_name = data['fname']
+    user.last_name = data['lname']
+    user.email = data['email']
+    user.role = 'MEMBER'
+    user.save()
+    return Response({'message':'Member added successfully'})
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def removeMember(request,id):
+    if request.user.role == 'MEMBER':
+        return Response({'message':"You don't have permission to do this"})
+    user = MyUser.objects.get(id=id)
+    user.delete()
+    return Response({'message':'Member removed successfully'})
