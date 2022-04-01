@@ -1,3 +1,4 @@
+## Steps to deploy django app to heroku
 step 1: create a heroku account
 step 2: download heroku CLI
 step 3: open your cmd or powershell and type command 
@@ -22,4 +23,8 @@ step 13: wait for some while and heroku will deploy your django app for you and 
 step 14: add the domain name heroku provided you with in allowed hosts list within your settings.py file
 step 15: change debug settings to DEBUG = False also in settings.py
 repeat step 11 and 12 to re-deploy your changes
+step 16: run command in terminal
+heroku run python manage.py makemigrations
+heroku run python manage.py migrate
+
 
