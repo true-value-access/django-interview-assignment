@@ -38,15 +38,10 @@ class AddBookView(APIView):
         user = Profile.objects.filter(id=payload['id']).first()
 
         auth.check_librarian(user)
-
-        book_id = Books.objects.create(
-            book_name = request.data['book_name'],
-            authot_name = request.data['authot_name'],
-            price = request.data['price'],
-        )
-        book_id.save()
-        serializer = BooksSerializer(book_id)
-        return Response(serializer.data)
+        book = BooksSerializer(data=request.data)
+        book.is_valid(raise_exception=True)
+        book.save()
+        return Response(book.data)
 
 class CheckAllBooksView(APIView):
 
@@ -54,12 +49,8 @@ class CheckAllBooksView(APIView):
         auth = Authenticate()
         _ = auth.check_authentication(request)
         books = Books.objects.all()
-        res = {}
-        res['Books'] = []
-        for book in books:
-            serializer = BooksSerializer(book)
-            res['Books'].append(serializer.data)
-        return Response(res)
+        serializer = BooksSerializer(books, many=True)
+        return Response(serializer.data)
 
 class DeleteBookView(APIView):
 

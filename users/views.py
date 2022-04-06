@@ -22,8 +22,9 @@ class RegisterView(APIView):
 class LoginView(APIView):
     
     def post(self, request):
-        username = request.data['username']
-        password = request.data['password']
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
         user = Profile.objects.filter(username=username).first()
         if not user :
             return Response({'message': 'Incorrect Username !'})
